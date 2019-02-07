@@ -1,12 +1,25 @@
 <template>
   <div id="app">
-    <form>
-      <select>
-        <option v-for="item in sources" :value="item" :key="item.id">
-          {{ item.name }}
-        </option>
-      </select>
-    </form>
+
+    <b-container fluid>
+      <b-row>
+        <b-col>
+          <form>
+            <select @change="chooseSource($event)">
+              <option v-for="item in sources" :value="item.id" :key="item.id">
+                {{ item.name }}
+              </option>
+            </select>
+          </form> 
+        </b-col>  
+      </b-row> 
+      <b-row>
+        <b-col>
+          <b-table responsive striped hover :items="articles" v-if="articles"></b-table>
+        </b-col>
+      </b-row>
+    </b-container>
+
   </div>
 </template>
 
@@ -18,8 +31,31 @@ export default {
   data () {
     return {
       sources: null,
-
+      articles: [],
+      food: null
     }
+  },
+  methods: {
+    chooseSource(event) {
+      console.log(event.target.value)
+      var _self = this
+      axios
+        .get('https://newsapi.org/v2/top-headlines?sources=bbc-news&apiKey=cd94713f6fe5467d893b99d5d69b75e5')
+        .then(
+          function (response) {
+            response.data.articles.forEach(function(element) {
+              _self.articles.push({
+                title: element.title,
+                image: element.urlToImage,
+                content: element.content,
+                url: element.url
+              })
+            });
+          }
+        )
+    }
+
+
   },
   mounted () {
     axios
@@ -32,12 +68,5 @@ export default {
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 </style>
