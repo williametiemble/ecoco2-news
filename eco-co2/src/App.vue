@@ -1,20 +1,33 @@
 <template>
   <div id="app">
+    <b-navbar toggleable="md" type="dark" variant="primary">
 
+      <b-navbar-brand href="#">Eco Co2 News</b-navbar-brand>
+
+        <b-navbar-nav class="ml-auto">
+          <b-button v-b-modal.modalFavorite class="float-right" variant="primary">
+            Favorites
+            <font-awesome-icon icon="star" color="yellow" />
+          </b-button>
+        </b-navbar-nav>
+
+    </b-navbar>    
     <b-container fluid>
-      <b-row>
-        <b-col>
+      <b-row class="mt-2">
+        <b-col cols="6">
           <form>
-            <select @change="chooseSource($event)">
-              <option v-for="item in sources" :value="item.id" :key="item.id">
-                {{ item.name }}
-              </option>
-            </select>
+            <div class="form-group">
+              <select class="form-control" @change="chooseSource($event)">
+                <option v-for="item in sources" :value="item.id" :key="item.id">
+                  {{ item.name }}
+                </option>
+              </select>
+            </div>            
           </form> 
         </b-col>  
       </b-row> 
       <b-row>
-        <b-col cols="12" md="3"v-for="article in articles">
+        <b-col cols="12" md="4" lg="3"v-for="article in articles">
           <Card :title="article.title"
                 :imgSrc="article.image"
                 :imgAlt="article.title"
@@ -26,7 +39,32 @@
         </b-col>
       </b-row>
     </b-container>
-
+    <b-modal id="modalFavorite" size="lg" title="Mes favories" cancel-disabled ok-disabled>
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Titre</th>
+              <th>Action</th>
+            </tr>
+          </thead>  
+          <tbody>
+            <tr v-for="article in favorites">
+              <td>{{article.title}}</td>
+              <td>
+                <b-button class="float-right" variant="primary" size="sm"
+                  @click="favorite(article)" >
+                  <font-awesome-icon v-if="isFavorite(article)" icon="star" color="yellow" />
+                  <font-awesome-icon v-else icon="star" color="white" />
+                </b-button>
+              </td>
+            </tr>
+          </tbody>  
+        </table>
+      </div>
+      <div slot="modal-footer" class="w-100">
+      </div>      
+    </b-modal>
   </div>
 </template>
 
