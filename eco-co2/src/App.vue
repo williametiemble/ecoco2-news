@@ -49,9 +49,10 @@ export default {
       console.log(event.target.value)
       var _self = this
       axios
-        .get('https://newsapi.org/v2/top-headlines?sources=bbc-news&apiKey=cd94713f6fe5467d893b99d5d69b75e5')
+        .get('https://newsapi.org/v2/top-headlines?sources='+event.target.value+'&apiKey=cd94713f6fe5467d893b99d5d69b75e5')
         .then(
           function (response) {
+            _self.articles = []
             response.data.articles.forEach(function(element) {
               _self.articles.push({
                 title: element.title,
