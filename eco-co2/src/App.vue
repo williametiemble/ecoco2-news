@@ -6,7 +6,7 @@
 
         <b-navbar-nav class="ml-auto">
           <b-button v-b-modal.modalFavorite class="float-right" variant="primary">
-            Favorites
+            Mes favoris 
             <font-awesome-icon icon="star" color="yellow" />
           </b-button>
         </b-navbar-nav>
@@ -39,7 +39,7 @@
         </b-col>
       </b-row>
     </b-container>
-    <b-modal id="modalFavorite" size="lg" title="Mes favories" cancel-disabled ok-disabled>
+    <b-modal id="modalFavorite" size="lg" title="Mes favoris" cancel-disabled ok-disabled>
       <div class="table-responsive">
         <table class="table table-striped">
           <thead>
