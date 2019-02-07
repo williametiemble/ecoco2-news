@@ -52,15 +52,20 @@ export default {
     favorite(article) {
       if (this.isFavorite(article))
       {
-        this.favorites.splice(this.favorites.indexOf(article.url), 1);       
+        this.favorites.splice(this.favorites.indexOf(article), 1);       
       } else {
-        this.favorites.push(article.url)
+        this.favorites.push(article)
       } 
       this.saveFavorites()   
     },
     isFavorite(article) {
-      console.log(article)
-      return (this.favorites.indexOf(article.url) != -1)
+      var find = false
+      this.favorites.forEach(function(element) {
+        if (element.url == article.url) { 
+          find = true
+        }
+      })
+      return find
     },
     saveFavorites() {
       const parsed = JSON.stringify(this.favorites);
