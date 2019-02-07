@@ -1,17 +1,32 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <form>
+      <select>
+        <option v-for="item in sources" :value="item" :key="item.id">
+          {{ item.name }}
+        </option>
+      </select>
+    </form>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import axios from 'axios'
 
 export default {
   name: 'app',
-  components: {
-    HelloWorld
+  data () {
+    return {
+      sources: null,
+
+    }
+  },
+  mounted () {
+    axios
+      .get('https://newsapi.org/v2/sources?apiKey=cd94713f6fe5467d893b99d5d69b75e5')
+      .then(
+        response => (this.sources = response.data.sources )
+      )
   }
 }
 </script>
