@@ -50,7 +50,7 @@ export default {
   },
   methods: {
     favorite(article) {
-      if (this.isFavorite(article.url))
+      if (this.isFavorite(article))
       {
         this.favorites.splice(this.favorites.indexOf(article.url), 1);       
       } else {
