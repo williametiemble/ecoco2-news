@@ -15,16 +15,14 @@
       </b-row> 
       <b-row>
         <b-col cols="12" md="3"v-for="article in articles">
-          <b-card :title="article.title"
-                  :img-src="article.image"
-                  :img-alt="article.title"
-                  img-top
-                  class="mb-2">
-            <p class="card-text">
-              {{article.content}}
-            </p>
-            <b-button :href="article.url" variant="primary">Voir la news</b-button>
-          </b-card>        
+          <Card :title="article.title"
+                :imgSrc="article.image"
+                :imgAlt="article.title"
+                :content="article.content"
+                :url="article.url"
+                @favorite="favorite(article)"
+                :isFavorite="isFavorite(article)"
+          />      
         </b-col>
       </b-row>
     </b-container>
@@ -34,19 +32,41 @@
 
 <script>
 import axios from 'axios'
+import Card from './components/Card.vue'
 
 export default {
   name: 'app',
+  components: {
+    Card
+  },
   data () {
     return {
       sources: null,
       articles: [],
-      food: null
+      food: null,
+      favorites: [],
+      newFavorite: null
     }
   },
   methods: {
+    favorite(article) {
+      if (this.isFavorite(article.url))
+      {
+        this.favorites.splice(this.favorites.indexOf(article.url), 1);       
+      } else {
+        this.favorites.push(article.url)
+      } 
+      this.saveFavorites()   
+    },
+    isFavorite(article) {
+      console.log(article)
+      return (this.favorites.indexOf(article.url) != -1)
+    },
+    saveFavorites() {
+      const parsed = JSON.stringify(this.favorites);
+      localStorage.setItem('favorites', parsed);
+    },    
     chooseSource(event) {
-      console.log(event.target.value)
       var _self = this
       axios
         .get('https://newsapi.org/v2/top-headlines?sources='+event.target.value+'&apiKey=cd94713f6fe5467d893b99d5d69b75e5')
@@ -64,11 +84,16 @@ export default {
           }
         )
     }
-
-
   },
   mounted () {
     var _self = this
+    if (localStorage.getItem('favorites')) {
+      try {
+        this.favorites = JSON.parse(localStorage.getItem('favorites'));
+      } catch(e) {
+        localStorage.removeItem('favorites');
+      }
+    }    
     axios
       .get('https://newsapi.org/v2/sources?apiKey=cd94713f6fe5467d893b99d5d69b75e5')
       .then(
