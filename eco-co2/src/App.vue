@@ -23,11 +23,8 @@
           </b-col>
           <b-col cols="1">
               <select class="form-control" v-model="numberArticlesView">
-                <option value="5" key="5">
-                  5 / {{numberArticles}}
-                </option>
-                <option value="10" key="10">
-                  10 / {{numberArticles}}
+                <option v-for="(number, n) in numberArticles" :value="n+1" :key="n+1">
+                  {{n+1}} / {{numberArticles}}
                 </option>
               </select>          
           </b-col>
@@ -91,7 +88,7 @@ export default {
       favorites: [],
       newFavorite: null,
       numberArticles: 0,
-      numberArticlesView: 5,
+      numberArticlesView: 0,
     }
   },
   methods: {
@@ -128,6 +125,7 @@ export default {
           function (response) {
             _self.articles = []
             _self.numberArticles = response.data.totalResults
+            _self.numberArticlesView = _self.numberArticles
             response.data.articles.forEach(function(element) {
               _self.articles.push({
                 title: element.title,
