@@ -23,7 +23,7 @@ export default {
   name: 'Card',
   methods: {
     favorite() {
-      this.$emit('favorite');
+      this.$emit('favorite')
     }
   },  
   props: {

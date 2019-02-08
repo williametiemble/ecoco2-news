@@ -13,22 +13,28 @@
 
     </b-navbar>    
     <b-container fluid>
-      <b-row class="mt-2">
-        <b-col cols="6">
-          <form>
-            <div class="form-group">
+      <b-row class="mt-2 mb-2">
+          <b-col cols="6">
               <select class="form-control" @change="chooseSource($event)">
                 <option v-for="item in sources" :value="item.id" :key="item.id">
                   {{ item.name }}
                 </option>
               </select>
-            </div>            
-          </form> 
-        </b-col>  
+          </b-col>
+          <b-col cols="1">
+              <select class="form-control" v-model="numberArticlesView">
+                <option value="5" key="5">
+                  5 / {{numberArticles}}
+                </option>
+                <option value="10" key="10">
+                  10 / {{numberArticles}}
+                </option>
+              </select>          
+          </b-col>
       </b-row> 
       <b-row>
-        <b-col cols="12" md="4" lg="3"v-for="article in articles">
-          <Card :title="article.title"
+        <b-col cols="12" md="4" lg="3" v-for="(article, n) in articles">
+          <Card v-if="n < numberArticlesView" :title="article.title"
                 :imgSrc="article.image"
                 :imgAlt="article.title"
                 :content="article.content"
@@ -83,18 +89,20 @@ export default {
       articles: [],
       food: null,
       favorites: [],
-      newFavorite: null
+      newFavorite: null,
+      numberArticles: 0,
+      numberArticlesView: 5,
     }
   },
   methods: {
     favorite(article) {
       if (this.isFavorite(article))
       {
-        this.favorites.splice(this.favorites.indexOf(article), 1);       
+        this.favorites.splice(this.favorites.indexOf(article), 1)
       } else {
         this.favorites.push(article)
       } 
-      this.saveFavorites()   
+      this.saveFavorites()
     },
     isFavorite(article) {
       var find = false
@@ -106,16 +114,20 @@ export default {
       return find
     },
     saveFavorites() {
-      const parsed = JSON.stringify(this.favorites);
-      localStorage.setItem('favorites', parsed);
+      const parsed = JSON.stringify(this.favorites)
+      localStorage.setItem('favorites', parsed)
     },    
     chooseSource(event) {
       var _self = this
+      if (event.target) {
+        event = event.target.value
+      }
       axios
-        .get('https://newsapi.org/v2/top-headlines?sources='+event.target.value+'&apiKey=cd94713f6fe5467d893b99d5d69b75e5')
+        .get('https://newsapi.org/v2/top-headlines?sources='+event+'&apiKey=cd94713f6fe5467d893b99d5d69b75e5')
         .then(
           function (response) {
             _self.articles = []
+            _self.numberArticles = response.data.totalResults
             response.data.articles.forEach(function(element) {
               _self.articles.push({
                 title: element.title,
@@ -132,26 +144,25 @@ export default {
     var _self = this
     if (localStorage.getItem('favorites')) {
       try {
-        this.favorites = JSON.parse(localStorage.getItem('favorites'));
+        this.favorites = JSON.parse(localStorage.getItem('favorites'))
       } catch(e) {
-        localStorage.removeItem('favorites');
+        localStorage.removeItem('favorites')
       }
     }    
     axios
       .get('https://newsapi.org/v2/sources?apiKey=cd94713f6fe5467d893b99d5d69b75e5')
       .then(
-        response => (this.sources = response.data.sources )
-          /*function (response) {
-            response.data.articles.forEach(function(element) {
-              _self.sources.push({
-                title: element.title,
-                image: element.urlToImage,
-                content: element.content,
-                url: element.url
-              })
-            });
-          } 
-          */       
+        function (response) {
+          _self.sources = []
+          console.log(response)
+          response.data.sources.forEach(function(element) {
+            _self.sources.push({
+              id: element.id,
+              name: element.name
+            })
+          })
+          _self.chooseSource(_self.sources[0].id)
+        }
       )
   }
 }
